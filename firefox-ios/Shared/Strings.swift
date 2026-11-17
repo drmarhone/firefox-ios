@@ -3743,6 +3743,14 @@ extension String {
                 comment: "A label indicating the action that a user can rate the Firefox app in the App store.")
         }
 
+        public enum Disconnect {
+            public static let ButtonTitle = MZLocalizedString(
+                key: "Settings.Disconnect.Button.Title.v161",
+                tableName: "Settings",
+                value: "Disconnect?",
+                comment: "Button at the bottom of account settings that opens a confirmation dialog to disconnect this device from the user's account.")
+        }
+
         public enum General {
             public enum ScrollToHideTabAndAddressBar {
                 public static let Title = MZLocalizedString(

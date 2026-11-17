@@ -67,17 +67,26 @@ final class ManageFxAccountSetting: Setting {
     }
 }
 
-final class DisconnectSetting: Setting {
+final class DisconnectSetting: Setting, FeatureFlaggable {
     // `unowned` is chosen here because the setting can't outlive the VC that owns it.
     // It skips the optional unwrapping that `weak` would require.
     unowned let settingsVC: SettingsTableViewController
     let profile: Profile?
     override var accessoryType: UITableViewCell.AccessoryType { return .none }
 
+    private var usesUpdatedSyncStrings: Bool {
+        featureFlagsProvider.isEnabled(.syncStringUpdates)
+    }
+
+    override var title: NSAttributedString? {
+        let title: String = usesUpdatedSyncStrings ? .Settings.Disconnect.ButtonTitle : .SettingsDisconnectSyncButton
+        return NSAttributedString(string: title)
+    }
+
     init(settings: SettingsTableViewController) {
         self.settingsVC = settings
         self.profile = settings.profile
-        super.init(title: NSAttributedString(string: .SettingsDisconnectSyncButton))
+        super.init(title: nil)
     }
 
     override var accessibilityIdentifier: String? { return "SignOut" }

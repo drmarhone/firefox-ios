@@ -5,16 +5,19 @@
 
 import XCTest
 import Common
+import Shared
 
 @MainActor
 class SyncContentSettingsViewControllerTests: XCTestCase {
+    private var featureFlags: MockNimbusFeatureFlags!
     var profile: MockProfile!
     var syncContentSettingsVC: SyncContentSettingsViewController?
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
     override func setUp() async throws {
         try await super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
+        featureFlags = MockNimbusFeatureFlags()
+        DependencyHelperMock().bootstrapDependencies(injectedFeatureFlagProvider: featureFlags)
         profile = makeProfile()
         syncContentSettingsVC = SyncContentSettingsViewController(windowUUID: windowUUID)
         syncContentSettingsVC?.profile = profile
@@ -22,9 +25,25 @@ class SyncContentSettingsViewControllerTests: XCTestCase {
 
     override func tearDown() async throws {
         DependencyHelperMock().reset()
+        featureFlags = nil
         profile = nil
         syncContentSettingsVC = nil
         try await super.tearDown()
+    }
+
+    func test_disconnectSetting_withUpdatedStringsEnabled_usesNewButtonTitle() throws {
+        featureFlags.enabledFlags = [.syncStringUpdates]
+        let settings = try XCTUnwrap(syncContentSettingsVC)
+        let subject = DisconnectSetting(settings: settings)
+
+        XCTAssertEqual(subject.title?.string, String.Settings.Disconnect.ButtonTitle)
+    }
+
+    func test_disconnectSetting_withUpdatedStringsDisabled_usesExistingButtonTitle() throws {
+        let settings = try XCTUnwrap(syncContentSettingsVC)
+        let subject = DisconnectSetting(settings: settings)
+
+        XCTAssertEqual(subject.title?.string, String.SettingsDisconnectSyncButton)
     }
 
     func test_syncContentSettingsViewController_doesNotLeak_whenGeneratedSettingsAreStored() {
