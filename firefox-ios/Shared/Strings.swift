@@ -5505,6 +5505,11 @@ extension String {
         }
 
         public enum Sync {
+            public static let Refresh = MZLocalizedString(
+                key: "TabsTray.Sync.RefreshButton.Title.v161",
+                tableName: "TabsTray",
+                value: "Refresh",
+                comment: "Button in the synced tabs panel of the tab tray. Tapping it refreshes the list of tabs from the user's other devices.")
             public static let SyncTabs = MZLocalizedString(
                 key: "TabsTray.SyncTabs.SyncTabsButton.Title.v119",
                 tableName: "TabsTray",
