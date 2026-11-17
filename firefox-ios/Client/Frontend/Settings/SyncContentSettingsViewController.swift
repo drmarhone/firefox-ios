@@ -92,9 +92,15 @@ final class DisconnectSetting: Setting, FeatureFlaggable {
     override var accessibilityIdentifier: String? { return "SignOut" }
 
     override func onClick(_ navigationController: UINavigationController?) {
+        let title: String = usesUpdatedSyncStrings
+            ? .Settings.Disconnect.AlertTitle
+            : .SettingsDisconnectSyncAlertTitle
+        let message: String = usesUpdatedSyncStrings
+            ? String(format: .Settings.Disconnect.AlertBody, AppName.shortName.rawValue)
+            : .SettingsDisconnectSyncAlertBody
         let alertController = UIAlertController(
-            title: .SettingsDisconnectSyncAlertTitle,
-            message: .SettingsDisconnectSyncAlertBody,
+            title: title,
+            message: message,
             preferredStyle: UIAlertController.Style.alert)
 
         alertController.addAction(

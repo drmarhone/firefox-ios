@@ -3744,6 +3744,16 @@ extension String {
         }
 
         public enum Disconnect {
+            public static let AlertTitle = MZLocalizedString(
+                key: "Settings.Disconnect.Alert.Title.v161",
+                tableName: "Settings",
+                value: "Disconnect?",
+                comment: "Title of the confirmation dialog shown when disconnecting this device from the user's account.")
+            public static let AlertBody = MZLocalizedString(
+                key: "Settings.Disconnect.Alert.Body.v161",
+                tableName: "Settings",
+                value: "%@ will stop syncing this device with your account. Your browsing data stays on this device.",
+                comment: "Body of the disconnect confirmation dialog. Explains that syncing stops but local browsing data is kept. %@ is the app name (e.g. Firefox).")
             public static let ButtonTitle = MZLocalizedString(
                 key: "Settings.Disconnect.Button.Title.v161",
                 tableName: "Settings",

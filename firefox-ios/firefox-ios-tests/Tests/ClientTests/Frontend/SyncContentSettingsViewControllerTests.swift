@@ -6,6 +6,7 @@
 import XCTest
 import Common
 import Shared
+import UIKit
 
 @MainActor
 class SyncContentSettingsViewControllerTests: XCTestCase {
@@ -46,6 +47,34 @@ class SyncContentSettingsViewControllerTests: XCTestCase {
         XCTAssertEqual(subject.title?.string, String.SettingsDisconnectSyncButton)
     }
 
+    func test_disconnectSetting_withUpdatedStringsEnabled_presentsNewModalCopy() throws {
+        featureFlags.enabledFlags = [.syncStringUpdates]
+        let settings = try XCTUnwrap(syncContentSettingsVC)
+        let subject = DisconnectSetting(settings: settings)
+        let navigationController = DisconnectNavigationControllerSpy()
+
+        subject.onClick(navigationController)
+
+        let alert = try XCTUnwrap(navigationController.presentedAlert)
+        XCTAssertEqual(alert.title, String.Settings.Disconnect.AlertTitle)
+        XCTAssertEqual(alert.message, String(format: .Settings.Disconnect.AlertBody, AppName.shortName.rawValue))
+        XCTAssertEqual(alert.actions.first?.title, String.SettingsDisconnectCancelAction)
+        XCTAssertEqual(alert.actions.last?.title, String.SettingsDisconnectDestructiveAction)
+        XCTAssertEqual(alert.actions.last?.style, .destructive)
+    }
+
+    func test_disconnectSetting_withUpdatedStringsDisabled_presentsExistingModalCopy() throws {
+        let settings = try XCTUnwrap(syncContentSettingsVC)
+        let subject = DisconnectSetting(settings: settings)
+        let navigationController = DisconnectNavigationControllerSpy()
+
+        subject.onClick(navigationController)
+
+        let alert = try XCTUnwrap(navigationController.presentedAlert)
+        XCTAssertEqual(alert.title, String.SettingsDisconnectSyncAlertTitle)
+        XCTAssertEqual(alert.message, String.SettingsDisconnectSyncAlertBody)
+    }
+
     func test_syncContentSettingsViewController_doesNotLeak_whenGeneratedSettingsAreStored() {
         let subject = SyncContentSettingsViewController(windowUUID: windowUUID)
         subject.profile = profile
@@ -75,5 +104,15 @@ class SyncContentSettingsViewControllerTests: XCTestCase {
         // passwords
         // credit cards
         XCTAssertEqual(engineSectionChildren?.count, 6)
+    }
+}
+
+private final class DisconnectNavigationControllerSpy: UINavigationController {
+    private(set) var presentedAlert: UIAlertController?
+
+    override func present(_ viewControllerToPresent: UIViewController,
+                          animated flag: Bool,
+                          completion: (() -> Void)? = nil) {
+        presentedAlert = viewControllerToPresent as? UIAlertController
     }
 }
